@@ -430,6 +430,7 @@ def validate_inputs(prompt, item, validated):
                     "input_name": x
                 }
             }
+            
             errors.append(error)
             continue
 

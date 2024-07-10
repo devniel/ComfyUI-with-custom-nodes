@@ -1,0 +1,113 @@
+[project]
+name = "comfy-script"
+version = "0.4.6"
+description = "A Python front end and library for ComfyUI"
+readme = "README.md"
+# ComfyUI: >=3.8
+# comfyui: >=3.9
+# >=3.6 is required to preserve insertion order of input types
+requires-python = ">=3.9"
+authors = [
+  { name="Chaoses-Ib", email="Chaos-es@outlook.com" },
+]
+keywords = ["comfyui"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+# There is no mandatory dependencies
+
+client = [
+  # Already required by ComfyUI
+  "aiohttp",
+  # Used by aiohttp
+  "yarl",
+
+  # 1.5.9: https://github.com/erdewit/nest_asyncio/issues/87
+  "nest_asyncio ~= 1.0, >= 1.5.9",
+]
+
+# Transpiler
+transpile = [
+  "networkx[default] ~= 3.0",
+
+  # Used to get nodes info
+  "comfy-script[client]",
+]
+
+# Runtime
+runtime = [
+  # Already required by ComfyUI
+  "Pillow",
+
+  "wrapt ~= 1.0",
+
+  "comfy-script[client]",
+
+  # Used to save script to images
+  "comfy-script[transpile]",
+]
+
+# Addtional nodes
+nodes = [
+  "ComfyUI_Ib_CustomNodes >= 0.2.2",
+  "comfyui-tooling-nodes",
+]
+
+# Everything except UI (Jupyter and CLI)
+no-ui = [
+  "comfy-script[client]",
+  "comfy-script[transpile]",
+  "comfy-script[runtime]",
+  "comfy-script[nodes]",
+]
+
+# Jupyter Notebook UI
+jupyter = [
+  "ipywidgets ~= 8.1",
+
+  # Already required by ComfyUI
+  "Pillow",
+]
+
+default = [
+  "comfy-script[no-ui]",
+  "comfy-script[jupyter]",
+]
+
+# CLI
+# Currently, only transpiler has CLI.
+cli = [
+  "click ~= 8.1",
+]
+
+all = [
+  "comfy-script[default]",
+  "comfy-script[cli]",
+]
+
+[project.urls]
+Homepage = "https://github.com/Chaoses-Ib/ComfyScript"
+Issues = "https://github.com/Chaoses-Ib/ComfyScript/issues"
+
+[project.entry-points."comfyui.custom_nodes"]
+# https://github.com/comfyanonymous/ComfyUI/pull/298
+comfy_script = "comfy_script.nodes"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+# TODO: Exclude docs and examples in sdist?
+
+[tool.hatch.envs.test]
+dependencies = [
+  "pytest"
+]
+
+[tool.pytest.ini_options]
+addopts = [
+  "--import-mode=importlib",
+]
